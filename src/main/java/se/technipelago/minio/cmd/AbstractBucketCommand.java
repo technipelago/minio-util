@@ -16,9 +16,9 @@ import java.net.URI;
  * @author Goran Ehrsson
  * @since 1.0
  */
-public abstract class AbstractBucketCommand<T extends BaseCommand> extends SubCommand<T> {
+public abstract class AbstractBucketCommand<T extends MinioCommand> extends SubCommand<T> {
 
-    protected MinioClient getClient(URI url, String region, String username, String password) {
+    protected MinioClient getClient(String url, String region, String username, String password) {
         URI uri = UriBuilder.of(url).replacePath("/").build();
         return MinioClient.builder()
                 .endpoint(uri.toString())

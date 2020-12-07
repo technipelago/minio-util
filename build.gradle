@@ -41,7 +41,7 @@ dependencies {
 
 
 application {
-    mainClass.set("se.technipelago.minio.cmd.BucketCommand")
+    mainClass.set("se.technipelago.minio.cmd.MainCommand")
 }
 
 java {

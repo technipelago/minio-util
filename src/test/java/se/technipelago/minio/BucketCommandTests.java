@@ -1,5 +1,6 @@
 package se.technipelago.minio;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.configuration.picocli.PicocliRunner;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.Environment;
@@ -12,8 +13,7 @@ import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-import se.technipelago.minio.cmd.BucketCommand;
-import se.technipelago.minio.cmd.ObjectCommand;
+import se.technipelago.minio.cmd.MainCommand;
 import se.technipelago.minio.config.McConfig;
 
 import java.io.ByteArrayOutputStream;
@@ -54,7 +54,7 @@ public class BucketCommandTests {
         try {
             configFile = File.createTempFile("test", ".json");
             configFile.deleteOnExit();
-            config.write(configFile);
+            new ObjectMapper().writeValue(configFile, config);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -76,43 +76,43 @@ public class BucketCommandTests {
             PrintStream out = System.out;
             System.setOut(new PrintStream(baos));
 
-            PicocliRunner.execute(BucketCommand.class, "-v", "-c", configFile.getAbsolutePath(), "create", "test/bucket-1");
+            PicocliRunner.execute(MainCommand.class, "-v", "-c", configFile.getAbsolutePath(), "bucket", "create", "test/bucket-1");
             out.println(baos.toString());
             assertTrue(baos.toString().contains("Created bucket bucket-1"));
 
             baos.reset();
-            PicocliRunner.execute(ObjectCommand.class, "-v", "-c", configFile.getAbsolutePath(), "cp", configFile.getAbsolutePath(), "test/bucket-1/config.json");
+            PicocliRunner.execute(MainCommand.class, "-v", "-c", configFile.getAbsolutePath(), "object", "cp", configFile.getAbsolutePath(), "test/bucket-1/config.json");
             out.println(baos.toString());
             assertTrue(baos.toString().contains("Saved object config.json"));
 
             baos.reset();
-            PicocliRunner.execute(BucketCommand.class, "-v", "-c", configFile.getAbsolutePath(), "list", "test/bucket-1");
+            PicocliRunner.execute(MainCommand.class, "-v", "-c", configFile.getAbsolutePath(), "bucket", "list", "test/bucket-1");
             out.println(baos.toString());
             assertTrue(baos.toString().contains("config.json"));
 
             baos.reset();
-            PicocliRunner.execute(BucketCommand.class, "-v", "-c", configFile.getAbsolutePath(), "create", "test/bucket-2");
+            PicocliRunner.execute(MainCommand.class, "-v", "-c", configFile.getAbsolutePath(), "bucket", "create", "test/bucket-2");
             out.println(baos.toString());
             assertTrue(baos.toString().contains("Created bucket bucket-2"));
 
             baos.reset();
-            PicocliRunner.execute(ObjectCommand.class, "-v", "-c", configFile.getAbsolutePath(), "cp", configFile.getAbsolutePath(), "test/bucket-2/config.json");
+            PicocliRunner.execute(MainCommand.class, "-v", "-c", configFile.getAbsolutePath(), "object", "cp", configFile.getAbsolutePath(), "test/bucket-2/config.json");
             out.println(baos.toString());
             assertTrue(baos.toString().contains("Saved object config.json"));
 
             baos.reset();
-            PicocliRunner.execute(BucketCommand.class, "-v", "-c", configFile.getAbsolutePath(), "diff", "test/bucket-1", "test/bucket-2");
+            PicocliRunner.execute(MainCommand.class, "-v", "-c", configFile.getAbsolutePath(), "bucket", "diff", "test/bucket-1", "test/bucket-2");
             out.println(baos.toString());
             assertTrue(baos.toString().contains("Verifying objects in bucket bucket-1 and bucket-2"));
 
             baos.reset();
             System.setOut(new PrintStream(baos));
-            PicocliRunner.execute(ObjectCommand.class, "-v", "-c", configFile.getAbsolutePath(), "cp", configFile.getAbsolutePath(), "test/bucket-1/config.json.bak");
+            PicocliRunner.execute(MainCommand.class, "-v", "-c", configFile.getAbsolutePath(), "object", "cp", configFile.getAbsolutePath(), "test/bucket-1/config.json.bak");
             out.println(baos.toString());
             assertTrue(baos.toString().contains("Saved object config.json"));
 
             baos.reset();
-            PicocliRunner.execute(BucketCommand.class, "-c", configFile.getAbsolutePath(), "diff", "test/bucket-1", "test/bucket-2");
+            PicocliRunner.execute(MainCommand.class, "-c", configFile.getAbsolutePath(), "bucket", "diff", "test/bucket-1", "test/bucket-2");
             out.println(baos.toString());
             assertTrue(baos.toString().contains("NoSuchKey: config.json.bak"));
         }

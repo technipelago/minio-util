@@ -4,6 +4,7 @@ import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
 import io.minio.PutObjectArgs;
 import picocli.CommandLine;
+import se.technipelago.minio.SubCommand;
 import se.technipelago.minio.config.McConfig;
 import se.technipelago.minio.config.McConfigAlias;
 
@@ -18,14 +19,18 @@ import java.io.InputStream;
  */
 @CommandLine.Command(name = "object", description = "Handle objects", mixinStandardHelpOptions = true,
         subcommands = {ObjectCommand.ObjectCreateCommand.class})
-public class ObjectCommand extends BaseCommand {
-    @Override
-    public void run() {
+public class ObjectCommand extends SubCommand<MainCommand> {
 
+    @CommandLine.ParentCommand
+    protected MainCommand parent;
+
+    @Override
+    public MainCommand getParent() {
+        return parent;
     }
 
     @CommandLine.Command(name = "cp", aliases = {"put", "create"}, description = "Save object in bucket", mixinStandardHelpOptions = true)
-    public static class ObjectCreateCommand extends AbstractBucketCommand<ObjectCommand> {
+    public static class ObjectCreateCommand extends AbstractBucketCommand<ObjectCommand> implements Runnable {
 
         @CommandLine.ParentCommand
         protected ObjectCommand parent;
@@ -35,7 +40,7 @@ public class ObjectCommand extends BaseCommand {
         private String uri;
 
         @Override
-        protected ObjectCommand getParent() {
+        public ObjectCommand getParent() {
             return parent;
         }
 

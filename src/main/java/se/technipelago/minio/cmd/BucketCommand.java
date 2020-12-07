@@ -9,6 +9,7 @@ import io.reactivex.Flowable;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import picocli.CommandLine;
+import se.technipelago.minio.SubCommand;
 import se.technipelago.minio.config.McConfig;
 import se.technipelago.minio.config.McConfigAlias;
 
@@ -21,33 +22,27 @@ import java.util.concurrent.CountDownLatch;
 @CommandLine.Command(name = "bucket", description = "Bucket operations", mixinStandardHelpOptions = true,
         subcommands = {BucketCommand.BucketCreateCommand.class, BucketCommand.BucketListCommand.class,
                 BucketCommand.BucketDiffCommand.class})
-public class BucketCommand extends BaseCommand {
+public class BucketCommand extends SubCommand<MainCommand> {
 
-    public static void main(String... args) {
-        int exitCode = new CommandLine(new BucketCommand()).execute(args);
-        System.exit(exitCode);
-    }
+    @CommandLine.ParentCommand
+    protected MainCommand parent;
+
 
     @Override
-    public void run() {
-        System.out.println("BucketCommand call() !!!");
+    public MainCommand getParent() {
+        return parent;
     }
 
     @CommandLine.Command(name = "create", description = "Create bucket", mixinStandardHelpOptions = true)
-    public static class BucketCreateCommand extends AbstractBucketCommand<BucketCommand> {
+    public static class BucketCreateCommand extends AbstractBucketCommand<BucketCommand> implements Runnable {
 
         @CommandLine.ParentCommand
         protected BucketCommand parent;
         @CommandLine.Parameters(paramLabel = "bucket", description = "Bucket name")
         private String url;
 
-        public static void main(String... args) {
-            int exitCode = new CommandLine(new BucketCreateCommand()).execute(args);
-            System.exit(exitCode);
-        }
-
         @Override
-        protected BucketCommand getParent() {
+        public BucketCommand getParent() {
             return parent;
         }
 
@@ -68,20 +63,15 @@ public class BucketCommand extends BaseCommand {
     }
 
     @CommandLine.Command(name = "list", aliases = {"ls"}, description = "List object", mixinStandardHelpOptions = true)
-    public static class BucketListCommand extends AbstractBucketCommand<BucketCommand> {
+    public static class BucketListCommand extends AbstractBucketCommand<BucketCommand> implements Runnable {
 
         @CommandLine.ParentCommand
         protected BucketCommand parent;
         @CommandLine.Parameters(paramLabel = "path", description = "Object path")
         private String path;
 
-        public static void main(String... args) {
-            int exitCode = new CommandLine(new BucketListCommand()).execute(args);
-            System.exit(exitCode);
-        }
-
         @Override
-        protected BucketCommand getParent() {
+        public BucketCommand getParent() {
             return parent;
         }
 
@@ -106,7 +96,7 @@ public class BucketCommand extends BaseCommand {
     }
 
     @CommandLine.Command(name = "diff", description = "Verify that same files exist in two buckets", mixinStandardHelpOptions = true)
-    public static class BucketDiffCommand extends AbstractBucketCommand<BucketCommand> {
+    public static class BucketDiffCommand extends AbstractBucketCommand<BucketCommand> implements Runnable {
 
         @CommandLine.ParentCommand
         protected BucketCommand parent;
@@ -115,13 +105,8 @@ public class BucketCommand extends BaseCommand {
         @CommandLine.Parameters(index = "1", paramLabel = "url2", description = "Bucket to verify")
         private String url2;
 
-        public static void main(String... args) {
-            int exitCode = new CommandLine(new BucketDiffCommand()).execute(args);
-            System.exit(exitCode);
-        }
-
         @Override
-        protected BucketCommand getParent() {
+        public BucketCommand getParent() {
             return parent;
         }
 

@@ -1,15 +1,15 @@
 package se.technipelago.minio;
 
-import se.technipelago.minio.cmd.BaseCommand;
+import se.technipelago.minio.cmd.MinioCommand;
 import se.technipelago.minio.config.McConfig;
 
 /**
  * @author Goran Ehrsson
  * @since 1.0
  */
-public abstract class SubCommand<T extends BaseCommand> implements Runnable {
+public abstract class SubCommand<T extends MinioCommand> implements MinioCommand<T> {
 
-    protected abstract T getParent();
+    public abstract T getParent();
 
     protected String getHost(String uri) {
         return uri.split("/", 3)[0];
@@ -19,15 +19,15 @@ public abstract class SubCommand<T extends BaseCommand> implements Runnable {
         return uri.split("/", 3)[2];
     }
 
-    protected boolean isVerbose() {
+    public boolean isVerbose() {
         return getParent().isVerbose();
     }
 
-    protected String getRegion() {
+    public String getRegion() {
         return getParent().getRegion();
     }
 
-    protected McConfig readConfiguration() {
+    public McConfig readConfiguration() {
         return getParent().readConfiguration();
     }
 

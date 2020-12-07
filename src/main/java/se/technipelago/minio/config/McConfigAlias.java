@@ -2,8 +2,6 @@ package se.technipelago.minio.config;
 
 import io.micronaut.core.annotation.Introspected;
 
-import java.net.URI;
-
 /**
  * @author Goran Ehrsson
  * @since 1.0
@@ -11,7 +9,7 @@ import java.net.URI;
 @Introspected
 public class McConfigAlias {
 
-    private URI url;
+    private String url;
     private String accessKey;
     private String secretKey;
     private String api;
@@ -20,7 +18,7 @@ public class McConfigAlias {
     public McConfigAlias() {
     }
 
-    public McConfigAlias(URI uri, String accessKey, String secretKey) {
+    public McConfigAlias(String uri, String accessKey, String secretKey) {
         this.url = uri;
         this.accessKey = accessKey;
         this.secretKey = secretKey;
@@ -28,11 +26,11 @@ public class McConfigAlias {
         this.path = "auto";
     }
 
-    public URI getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    public void setUrl(URI url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 

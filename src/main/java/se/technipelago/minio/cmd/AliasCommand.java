@@ -14,26 +14,24 @@ import java.util.Map;
  */
 @CommandLine.Command(name = "alias", description = "Handle host aliases", mixinStandardHelpOptions = true,
         subcommands = {AliasCommand.ListAliasCommand.class, AliasCommand.AddAliasCommand.class})
-public class AliasCommand extends BaseCommand {
+public class AliasCommand extends SubCommand<MainCommand> {
+
+    @CommandLine.ParentCommand
+    protected MainCommand parent;
 
     @Override
-    public void run() {
-        System.out.println("The BaseCommand!");
+    public MainCommand getParent() {
+        return parent;
     }
 
     @CommandLine.Command(name = "list", description = "List all configured aliases")
-    public static class ListAliasCommand extends SubCommand<AliasCommand> {
+    public static class ListAliasCommand extends SubCommand<AliasCommand> implements Runnable {
 
         @CommandLine.ParentCommand
         protected AliasCommand parent;
 
-        public static void main(String... args) {
-            int exitCode = new CommandLine(new ListAliasCommand()).execute(args);
-            System.exit(exitCode);
-        }
-
         @Override
-        protected AliasCommand getParent() {
+        public AliasCommand getParent() {
             return parent;
         }
 
@@ -50,7 +48,7 @@ public class AliasCommand extends BaseCommand {
     }
 
     @CommandLine.Command(name = "add", description = "Add host alias")
-    public static class AddAliasCommand extends SubCommand<AliasCommand> {
+    public static class AddAliasCommand extends SubCommand<AliasCommand> implements Runnable {
 
         @CommandLine.ParentCommand
         protected AliasCommand parent;
@@ -63,13 +61,8 @@ public class AliasCommand extends BaseCommand {
         @CommandLine.Parameters(index = "3", paramLabel = "secretrKey", description = "Secret key")
         private String secretKey;
 
-        public static void main(String... args) {
-            int exitCode = new CommandLine(new AddAliasCommand()).execute(args);
-            System.exit(exitCode);
-        }
-
         @Override
-        protected AliasCommand getParent() {
+        public AliasCommand getParent() {
             return parent;
         }
 

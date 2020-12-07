@@ -6,21 +6,6 @@
     "allDeclaredMethods" : true,
     "allPublicMethods" : true,
     "allDeclaredFields" : true,
-    "allPublicFields" : true,
-    "methods": [
-      { "name": "<init>", "parameterTypes": [] }
-    ]
-  },
-  {
-    "name": "io.minio.BaseArgs",
-    "allDeclaredConstructors" : true,
-    "allPublicConstructors" : true,
-    "allDeclaredMethods" : true,
-    "allPublicMethods" : true,
-    "allDeclaredFields" : true,
-    "allPublicFields" : true,
-    "methods": [
-      { "name": "<init>", "parameterTypes": [] }
-    ]
+    "allPublicFields" : true
   }
 ]
