@@ -29,17 +29,15 @@ public class ObjectCommand extends BaseCommand {
 
         @CommandLine.ParentCommand
         protected ObjectCommand parent;
+        @CommandLine.Parameters(index = "0", paramLabel = "file", description = "The file to store")
+        private String file;
+        @CommandLine.Parameters(index = "1", paramLabel = "path", description = "Object path")
+        private String uri;
 
         @Override
         protected ObjectCommand getParent() {
             return parent;
         }
-
-        @CommandLine.Parameters(index = "0", paramLabel = "file", description = "The file to store")
-        private String file;
-
-        @CommandLine.Parameters(index = "1", paramLabel = "path", description = "Object path")
-        private String uri;
 
         @Override
         public void run() {

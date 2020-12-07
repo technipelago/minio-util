@@ -1,6 +1,5 @@
 package se.technipelago.minio;
 
-import picocli.CommandLine;
 import se.technipelago.minio.cmd.BaseCommand;
 import se.technipelago.minio.config.McConfig;
 

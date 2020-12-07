@@ -43,9 +43,9 @@ public class AliasCommandTests {
     }
 
     @Test
-    public void listWithNoAliasesShouldReturnNothing() throws Exception {
+    public void listWithNoAliasesShouldReturnNothing() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream out = System.out;
+        //PrintStream out = System.out;
         System.setOut(new PrintStream(baos));
 
         try (ApplicationContext ctx = ApplicationContext.run(Environment.CLI, Environment.TEST)) {
@@ -58,7 +58,7 @@ public class AliasCommandTests {
     @Test
     public void listWithTwoAliasesShouldReturnTwoLines() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream out = System.out;
+        //PrintStream out = System.out;
         System.setOut(new PrintStream(baos));
 
         McConfig config = new ObjectMapper().readValue(configFile, McConfig.class);
@@ -67,8 +67,7 @@ public class AliasCommandTests {
         config.write(configFile);
 
         try (ApplicationContext ctx = ApplicationContext.run(Environment.CLI, Environment.TEST)) {
-            String[] args = new String[]{"-v", "-c", configFile.getAbsolutePath(), "list"};
-            assertEquals(0, PicocliRunner.execute(AliasCommand.class, args));
+            assertEquals(0, PicocliRunner.execute(AliasCommand.class, "-v", "-c", configFile.getAbsolutePath(), "list"));
             //out.println(baos.toString());
             assertEquals("test1\thttp://localhost:9000\ntest2\thttp://localhost:9001\n", baos.toString());
         }

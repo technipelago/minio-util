@@ -6,7 +6,6 @@ import io.minio.StatObjectResponse;
 import io.minio.errors.ErrorResponseException;
 import io.minio.messages.Item;
 import io.reactivex.Flowable;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import picocli.CommandLine;
@@ -14,7 +13,6 @@ import se.technipelago.minio.config.McConfig;
 import se.technipelago.minio.config.McConfigAlias;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Goran Ehrsson
@@ -22,17 +20,17 @@ import java.util.concurrent.TimeUnit;
  */
 @CommandLine.Command(name = "bucket", description = "Bucket operations", mixinStandardHelpOptions = true,
         subcommands = {BucketCommand.BucketCreateCommand.class, BucketCommand.BucketListCommand.class,
-                BucketCommand.BucketDiffCommand.class, BucketCommand.BucketVerifyCommand.class})
+                BucketCommand.BucketDiffCommand.class})
 public class BucketCommand extends BaseCommand {
-
-    @Override
-    public void run() {
-        System.out.println("BucketCommand call() !!!");
-    }
 
     public static void main(String... args) {
         int exitCode = new CommandLine(new BucketCommand()).execute(args);
         System.exit(exitCode);
+    }
+
+    @Override
+    public void run() {
+        System.out.println("BucketCommand call() !!!");
     }
 
     @CommandLine.Command(name = "create", description = "Create bucket", mixinStandardHelpOptions = true)
@@ -40,18 +38,17 @@ public class BucketCommand extends BaseCommand {
 
         @CommandLine.ParentCommand
         protected BucketCommand parent;
-
-        @Override
-        protected BucketCommand getParent() {
-            return parent;
-        }
-
         @CommandLine.Parameters(paramLabel = "bucket", description = "Bucket name")
         private String url;
 
         public static void main(String... args) {
             int exitCode = new CommandLine(new BucketCreateCommand()).execute(args);
             System.exit(exitCode);
+        }
+
+        @Override
+        protected BucketCommand getParent() {
+            return parent;
         }
 
         @Override
@@ -75,18 +72,17 @@ public class BucketCommand extends BaseCommand {
 
         @CommandLine.ParentCommand
         protected BucketCommand parent;
-
-        @Override
-        protected BucketCommand getParent() {
-            return parent;
-        }
-
         @CommandLine.Parameters(paramLabel = "path", description = "Object path")
         private String path;
 
         public static void main(String... args) {
             int exitCode = new CommandLine(new BucketListCommand()).execute(args);
             System.exit(exitCode);
+        }
+
+        @Override
+        protected BucketCommand getParent() {
+            return parent;
         }
 
         @Override
@@ -99,7 +95,7 @@ public class BucketCommand extends BaseCommand {
             final CountDownLatch latch = new CountDownLatch(1);
 
             Flowable.fromPublisher(getObjects(client, bucket))
-                    .doOnComplete(() -> latch.countDown())
+                    .doOnComplete(latch::countDown)
                     .forEach(item -> System.out.println(item.objectName()));
             try {
                 latch.await();
@@ -109,21 +105,14 @@ public class BucketCommand extends BaseCommand {
         }
     }
 
-    @CommandLine.Command(name = "diff", description = "Show file differences between two buckets", mixinStandardHelpOptions = true)
+    @CommandLine.Command(name = "diff", description = "Verify that same files exist in two buckets", mixinStandardHelpOptions = true)
     public static class BucketDiffCommand extends AbstractBucketCommand<BucketCommand> {
 
         @CommandLine.ParentCommand
         protected BucketCommand parent;
-
-        @Override
-        protected BucketCommand getParent() {
-            return parent;
-        }
-
-        @CommandLine.Parameters(index = "0", paramLabel = "url1", description = "First bucket to diff")
+        @CommandLine.Parameters(index = "0", paramLabel = "url1", description = "Reference bucket")
         private String url1;
-
-        @CommandLine.Parameters(index = "1", paramLabel = "url2", description = "Second bucket to diff")
+        @CommandLine.Parameters(index = "1", paramLabel = "url2", description = "Bucket to verify")
         private String url2;
 
         public static void main(String... args) {
@@ -131,52 +120,9 @@ public class BucketCommand extends BaseCommand {
             System.exit(exitCode);
         }
 
-        public void run() {
-            if (isVerbose()) {
-                System.out.println("Comparing objects in bucket " + getBucket(url1) + " and " + getBucket(url2));
-            }
-            final McConfig config = readConfiguration();
-            final String host1 = getHost(url1);
-            final String host2 = getHost(url2);
-            final McConfigAlias alias1 = config.getAlias(host1).orElseThrow(() -> new RuntimeException("No such host: " + host1));
-            final McConfigAlias alias2 = config.getAlias(host2).orElseThrow(() -> new RuntimeException("No such host: " + host2));
-            final MinioClient client1 = getClient(alias1.getUrl(), getRegion(), alias1.getAccessKey(), alias1.getSecretKey());
-            final MinioClient client2 = getClient(alias2.getUrl(), getRegion(), alias2.getAccessKey(), alias2.getSecretKey());
-            final Publisher<Item> bucket1Objects = getObjects(client1, getBucket(url1));
-            final Publisher<Item> bucket2Objects = getObjects(client2, getBucket(url2));
-            final CountDownLatch latch = new CountDownLatch(1);
-
-            Flowable.zip(bucket1Objects, bucket2Objects, (o1, o2) -> o1.objectName() + " <--> " + o2.objectName())
-                    .doOnComplete(() -> latch.countDown())
-                    .subscribe(System.out::println);
-            try {
-                latch.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @CommandLine.Command(name = "verify", description = "Verify that same files exist in two buckets", mixinStandardHelpOptions = true)
-    public static class BucketVerifyCommand extends AbstractBucketCommand<BucketCommand> {
-
-        @CommandLine.ParentCommand
-        protected BucketCommand parent;
-
         @Override
         protected BucketCommand getParent() {
             return parent;
-        }
-
-        @CommandLine.Parameters(index = "0", paramLabel = "url1", description = "Reference bucket")
-        private String url1;
-
-        @CommandLine.Parameters(index = "1", paramLabel = "url2", description = "Bucket to verify")
-        private String url2;
-
-        public static void main(String... args) {
-            int exitCode = new CommandLine(new BucketVerifyCommand()).execute(args);
-            System.exit(exitCode);
         }
 
         @Override
@@ -247,7 +193,7 @@ public class BucketCommand extends BaseCommand {
         }
 
         private String canonicalizeEtag(String etag) {
-            if(etag != null && etag.indexOf('"') == 0 && etag.lastIndexOf('"') == (etag.length()-1)) {
+            if (etag != null && etag.indexOf('"') == 0 && etag.lastIndexOf('"') == (etag.length() - 1)) {
                 return etag.substring(1, etag.length() - 1);
             }
             return etag;

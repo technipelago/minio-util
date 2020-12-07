@@ -6,7 +6,6 @@ import se.technipelago.minio.config.McConfig;
 import se.technipelago.minio.config.McConfigAlias;
 
 import java.net.URI;
-import java.util.Comparator;
 import java.util.Map;
 
 /**
@@ -28,6 +27,11 @@ public class AliasCommand extends BaseCommand {
         @CommandLine.ParentCommand
         protected AliasCommand parent;
 
+        public static void main(String... args) {
+            int exitCode = new CommandLine(new ListAliasCommand()).execute(args);
+            System.exit(exitCode);
+        }
+
         @Override
         protected AliasCommand getParent() {
             return parent;
@@ -39,16 +43,9 @@ public class AliasCommand extends BaseCommand {
             Map<String, McConfigAlias> aliases = config.getAliases();
             if (aliases != null) {
                 aliases.entrySet().stream()
-                        .sorted(Comparator.comparing(Map.Entry::getKey))
-                        .forEach(entry -> {
-                            System.out.println(entry.getKey() + "\t" + entry.getValue().getUrl());
-                        });
+                        .sorted(Map.Entry.comparingByKey())
+                        .forEach(entry -> System.out.println(entry.getKey() + "\t" + entry.getValue().getUrl()));
             }
-        }
-
-        public static void main(String... args) {
-            int exitCode = new CommandLine(new ListAliasCommand()).execute(args);
-            System.exit(exitCode);
         }
     }
 
@@ -57,27 +54,23 @@ public class AliasCommand extends BaseCommand {
 
         @CommandLine.ParentCommand
         protected AliasCommand parent;
-
-        @Override
-        protected AliasCommand getParent() {
-            return parent;
-        }
-
         @CommandLine.Parameters(index = "0", paramLabel = "alias", description = "Host alias")
         private String alias;
-
         @CommandLine.Parameters(index = "1", paramLabel = "url", description = "Endpoint URL")
         private URI uri;
-
         @CommandLine.Parameters(index = "2", paramLabel = "accessKey", description = "Access key")
         private String accessKey;
-
         @CommandLine.Parameters(index = "3", paramLabel = "secretrKey", description = "Secret key")
         private String secretKey;
 
         public static void main(String... args) {
             int exitCode = new CommandLine(new AddAliasCommand()).execute(args);
             System.exit(exitCode);
+        }
+
+        @Override
+        protected AliasCommand getParent() {
+            return parent;
         }
 
         @Override
