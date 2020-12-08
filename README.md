@@ -1,4 +1,3 @@
-## Feature http-client documentation
+## MinIO Utility
 
-- [Micronaut Micronaut HTTP Client documentation](https://docs.micronaut.io/latest/guide/index.html#httpClient)
-
+A CLI utility to perform tasks complementing MinIO's `mc` client.
