@@ -1,6 +1,5 @@
-package se.technipelago.minio;
+package se.technipelago.minio.cmd;
 
-import se.technipelago.minio.cmd.MinioCommand;
 import se.technipelago.minio.config.McConfig;
 
 /**

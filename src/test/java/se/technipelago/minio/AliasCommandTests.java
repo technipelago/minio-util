@@ -7,7 +7,6 @@ import io.micronaut.context.env.Environment;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import se.technipelago.minio.cmd.AliasCommand;
 import se.technipelago.minio.cmd.MainCommand;
 import se.technipelago.minio.config.McConfig;
 

@@ -8,7 +8,6 @@ import io.minio.Result;
 import io.minio.messages.Item;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
-import se.technipelago.minio.SubCommand;
 
 import java.net.URI;
 

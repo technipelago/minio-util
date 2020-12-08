@@ -5,6 +5,9 @@ import io.micronaut.configuration.picocli.PicocliRunner;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.Environment;
 import picocli.CommandLine;
+import se.technipelago.minio.cmd.alias.AliasCommand;
+import se.technipelago.minio.cmd.bucket.BucketCommand;
+import se.technipelago.minio.cmd.object.ObjectCommand;
 import se.technipelago.minio.config.McConfig;
 
 import javax.inject.Inject;
