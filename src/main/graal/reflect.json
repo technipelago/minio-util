@@ -1,11 +1,39 @@
 [
   {
-    "name": "io.minio.ListObjectsArgs",
-    "allDeclaredConstructors" : true,
-    "allPublicConstructors" : true,
-    "allDeclaredMethods" : true,
-    "allPublicMethods" : true,
-    "allDeclaredFields" : true,
-    "allPublicFields" : true
+    "name":"io.minio.ListObjectsArgs",
+    "allDeclaredConstructors":true,
+    "methods":[{"name":"<init>","parameterTypes":[] }]
+  },
+  {
+    "name":"io.minio.messages.Contents",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allDeclaredConstructors":true
+  },
+  {
+    "name":"io.minio.messages.Item",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true
+  },
+  {
+    "name":"io.minio.messages.ListBucketResultV2",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allDeclaredConstructors":true
+  },
+  {
+    "name":"io.minio.messages.ListObjectsResult",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true
+  },
+  {
+    "name":"io.minio.messages.Owner",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allDeclaredConstructors":true
+  },
+  {
+    "name":"io.minio.messages.ResponseDate$ResponseDateConverter",
+    "methods":[{"name":"<init>","parameterTypes":[] }]
   }
 ]
