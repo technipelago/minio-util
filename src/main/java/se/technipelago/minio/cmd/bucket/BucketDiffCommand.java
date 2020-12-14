@@ -48,7 +48,7 @@ public class BucketDiffCommand extends AbstractBucketCommand<BucketCommand> impl
         final String theSecondBucket = getBucket(url2);
         final CountDownLatch latch = new CountDownLatch(1);
 
-        getObjects(client1, getBucket(url1)).subscribe(new Subscriber<>() {
+        getObjects(client1, getBucket(url1)).subscribe(new Subscriber<Item>() {
 
             private Subscription subscription;
 
