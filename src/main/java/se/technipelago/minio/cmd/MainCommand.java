@@ -80,7 +80,10 @@ public class MainCommand implements MinioCommand<MinioCommand<?>>, Runnable {
     public void writeConfiguration(McConfig item) {
         File configFile = getConfigFile();
         try {
-            configFile.getParentFile().mkdirs();
+            File parent = configFile.getParentFile();
+            if (!parent.exists() && !parent.mkdirs()) {
+                throw new IOException("Unable to create directory: " + parent);
+            }
             objectMapper.writeValue(configFile, item);
         } catch (IOException e) {
             throw new RuntimeException(e);
